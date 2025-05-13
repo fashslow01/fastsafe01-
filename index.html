@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastSafe01 - Gaming Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 2em;
+            color: #00ff88;
+            text-transform: uppercase;
+        }
+
+        .container {
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .buttons a, .buttons button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background: #00ff88;
+            color: #000;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .buttons a:hover, .buttons button:hover {
+            background: #00cc66;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .section h2 {
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .product {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .product img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .product h3 {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        .product .price {
+            color: #00ff88;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 2px solid #00ff88;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .news {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+        }
+
+        .news-item {
+            display: inline-block;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-right: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .winners {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .winner-item {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-product {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #fff;
+            transition: background 0.3s;
+        }
+
+        .modal-product img {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .modal-product h3 {
+            font-size: 1em;
+        }
+
+        .modal-product:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .close {
+            color: #00ff88;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #00cc66;
+        }
+
+        /* Scrollbar Styling */
+        .winners::-webkit-scrollbar, .news::-webkit-scrollbar, .modal-content::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .winners::-webkit-scrollbar-thumb, .news::-webkit-scrollbar-thumb, .modal-content::-webkit-scrollbar-thumb {
+            background: #00ff> border-radius: 10px;
+        }
+
+        .winners::-webkit-scrollbar-track, .news::-webkit-scrollbar-track, .modal-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 600px) {
+            .products {
+                grid-template-columns: 1fr;
+            }
+
+            .news-item {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FastSafe01</h1>
+    </header>
+
+    <div class="container">
+        <div class="buttons">
+            <button onclick="openModal()">WhatsApp</button>
+            <a href="https://chat.whatsapp.com/KYxSGhZjtDVHNJLpDAzBXg" target="_blank">Join Group</a>
+        </div>
+
+        <div class="section">
+            <h2>Produk Gaming</h2>
+            <div class="products">
+                <div class="product">
+                    <img src="https://via.placeholder.com/150?text=Gaming+Mouse" alt="Gaming Mouse">
+                    <h3>Gaming Mouse</h3>
+                    <div class="price">Rp 500.000</div>
+                </div>
+                <div class="product">
+                    <img src="https://via.placeholder.com/150?text=Keyboard" alt="Keyboard">
+                    <h3>Mechanical Keyboard</h3>
+                    <div class="price">Rp 1.200.000</div>
+                </div>
+                <div class="product">
+                    <img src="https://via.placeholder.com/150?text=Headset" alt="Headset">
+                    <h3>Gaming Headset</h3>
+                    <div class="price">Rp 800.000</div>
+                </div>
+                <div class="product">
+                    <img src="https://via.placeholder.com/150?text=Mousepad" alt="Mousepad">
+                    <h3>RGB Mousepad</h3>
+                    <div class="price">Rp 350.000</div>
+                </div>
+                <div class="product">
+                    <img src="https://via.placeholder.com/150?text=Gaming+Chair" alt="Gaming Chair">
+                    <h3>Gaming Chair</h3>
+                    <div class="price">Rp 2.500.000</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Berita Terbaru</h2>
+            <div class="news">
+                <div class="news-item">
+                    <p>Diskon 20% untuk semua produk gaming!</p>
+                </div>
+                <div class="news-item">
+                    <p>Giveaway headset gaming bulan ini!</p>
+                </div>
+                <div class="news-item">
+                    <p>Restock mouse gaming edisi terbatas!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Pemenang Giveaway</h2>
+            <div class="winners">
+                <div class="winner-item">Budi - Headset Gaming</div>
+                <div class="winner-item">Siti - Mouse Gaming</div>
+                <div class="winner-item">Andi - Keyboard Mechanical</div>
+                <div class="winner-item">Rina - Voucher 500K</div>
+                <div class="winner-item">Joko - Headset Wireless</div>
+                <div class="winner-item">Tina - Mousepad RGB</div>
+                <div class="winner-item">Rudi - Voucher 200K</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">×</span>
+            <h2>Pilih Produk</h2>
+            <a href="https://wa.me/6285191049836?text=Saya%20ingin%20membeli%20Gaming%20Mouse" class="modal-product">
+                <img src="https://via.placeholder.com/60?text=Gaming+Mouse" alt="Gaming Mouse">
+                <h3>Gaming Mouse - Rp 500.000</h3>
+            </a>
+            <a href="https://wa.me/6285191049836?text=Saya%20ingin%20membeli%20Mechanical%20Keyboard" class="modal-product">
+                <img src="https://via.placeholder.com/60?text=Keyboard" alt="Keyboard">
+                <h3>Mechanical Keyboard - Rp 1.200.000</h3>
+            </a>
+            <a href="https://wa.me/6285191049836?text=Saya%20ingin%20membeli%20Gaming%20Headset" class="modal-product">
+                <img src="https://via.placeholder.com/60?text=Headset" alt="Headset">
+                <h3>Gaming Headset - Rp 800.000</h3>
+            </a>
+            <a href="https://wa.me/6285191049836?text=Saya%20ingin%20membeli%20RGB%20Mousepad" class="modal-product">
+                <img src="https://via.placeholder.com/60?text=Mousepad" alt="Mousepad">
+                <h3>RGB Mousepad - Rp 350.000</h3>
+            </a>
+            <a href="https://wa.me/6285191049836?text=Saya%20ingin%20membeli%20Gaming%20Chair" class="modal-product">
+                <img src="https://via.placeholder.com/60?text=Gaming+Chair" alt="Gaming Chair">
+                <h3>Gaming Chair - Rp 2.500.000</h3>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openModal() {
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productModal')) {
+                closeModal();
+            }
+        }
+
+        // Auto-scroll news (optional)
+        const newsContainer = document.querySelector('.news');
+        let scrollAmount = 0;
+        setInterval(() => {
+            scrollAmount += 1;
+            newsContainer.scrollLeft = scrollAmount;
+            if (scrollAmount >= newsContainer.scrollWidth - newsContainer.clientWidth) {
+                scrollAmount = 0;
+            }
+        }, 50);
+    </script>
+</body>
+</html>
