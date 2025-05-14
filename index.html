@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRIS Only - Gaming Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
+            color: #e0e0e0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+
+        .container.menu-active {
+            margin-left: 260px;
+        }
+
+        /* Header */
+        .header {
+            background: #4a90e2;
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .header .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .header .nav-links a:hover {
+            color: #d1e7ff;
+        }
+
+        .theme-toggle {
+            background: #fff;
+            color: #4a90e2;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background: #4a90e2;
+            padding: 20px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+        }
+
+        .hamburger-menu.active {
+            transform: translateX(0);
+        }
+
+        .hamburger-menu a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 0;
+            font-size: 18px;
+        }
+
+        .hamburger-menu a:hover {
+            color: #d1e7ff;
+        }
+
+        /* Search and Sort Bar */
+        .search-sort-bar {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .search-sort-bar input {
+            padding: 10px;
+            width: 60%;
+            max-width: 400px;
+            border: none;
+            border-radius: 5px;
+            background: #333;
+            color: #fff;
+        }
+
+        .search-sort-bar select {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #333;
+            color: #fff;
+        }
+
+        /* Event Board */
+        .event-board {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 20px 0;
+            position: relative;
+            background: #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .event-slide {
+            display: inline-block;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        .event-slide img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .event-slide a {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+
+        #countdown {
+            text-align: center;
+            font-size: 18px;
+            color: #4a90e2;
+            margin-bottom: 10px;
+        }
+
+        /* Giveaway Ticker */
+        .giveaway-ticker {
+            background: #222;
+            padding: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+            border-left: 5px solid;
+            border-right: 5px solid;
+            animation: rgb-border 3s infinite;
+        }
+
+        @keyframes rgb-border {
+            0% { border-color: #ff0000; }
+            33% { border-color: #00ff00; }
+            66% { border-color: #0000ff; }
+            100% { border-color: #ff0000; }
+        }
+
+        .ticker-content {
+            animation: ticker-scroll 10s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100%); }
+        }
+
+        /* Floating Buttons */
+        .floating-btn, .login-btn, .chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4a90e2;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .login-btn {
+            bottom: 70px;
+        }
+
+        .chat-btn {
+            bottom: 120px;
+        }
+
+        /* Modals */
+        .login-modal, .variant-modal, .preview-modal, .review-modal, .tracking-modal, .newsletter-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-content input, .modal-content textarea, .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: #444;
+            color: #fff;
+        }
+
+        .modal-content button {
+            background: #4a90e2;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .product-card {
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .product-card h3 {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .product-card .actions {
+            display: flex;
+            justify-content: space-around;
+            padding: 5px;
+        }
+
+        .product-card .actions button {
+            background: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Best Seller and Recommendations */
+        .best-seller, .recommendations {
+            margin: 20px 0;
+        }
+
+        .best-seller h2, .recommendations h2 {
+            color: #4a90e2;
+            margin-bottom: 10px;
+        }
+
+        /* Page Sections */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Transactions and Top Buyers */
+        .transactions, .top-buyers, .wishlist, .cart, .tracking {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        /* Newsletter */
+        .newsletter {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header .nav-links {
+                display: none;
+            }
+
+            .hamburger-menu {
+                display: block;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
+            .event-slide {
+                width: 200px;
+            }
+
+            .container.menu-active {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="menu-toggle">☰</div>
+        <div class="nav-links">
+            <a href="#" onclick="showPage('main')">Menu</a>
+            <a href="#" onclick="showPage('products')">Pemesanan</a>
+            <a href="#" onclick="showPage('transactions')">Transaksi</a>
+            <a href="#" onclick="showPage('top-buyers')">Top Pembeli</a>
+            <a href="#" onclick="showPage('wishlist')">Wishlist</a>
+            <a href="#" onclick="showPage('cart')">Cart</a>
+            <a href="#" onclick="showPage('tracking')">Tracking</a>
+            <a href="https://chat.whatsapp.com/INVITE_CODE">Masuk Grup</a>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu">
+        <a href="#" onclick="showPage('main')">Menu</a>
+        <a href="#" onclick="showPage('products')">Pemesanan</a>
+        <a href="#" onclick="showPage('transactions')">Transaksi</a>
+        <a href="#" onclick="showPage('top-buyers')">Top Pembeli</a>
+        <a href="#" onclick="showPage('wishlist')">Wishlist</a>
+        <a href="#" onclick="showPage('cart')">Cart</a>
+        <a href="#" onclick="showPage('tracking')">Tracking</a>
+        <a href="https://chat.whatsapp.com/INVITE_CODE">Masuk Grup</a>
+    </div>
+
+    <!-- Search and Sort Bar -->
+    <div class="search-sort-bar">
+        <input type="text" id="searchInput" placeholder="Cari produk...">
+        <select id="sortSelect">
+            <option value="name-asc">Nama: A-Z</option>
+            <option value="name-desc">Nama: Z-A</option>
+            <option value="popular">Paling Populer</option>
+        </select>
+    </div>
+
+    <!-- Main Page -->
+    <div class="page active" id="main">
+        <div class="container">
+            <!-- Event Countdown -->
+            <div id="countdown"></div>
+
+            <!-- Event Board -->
+            <div class="event-board">
+                <div class="event-slide">
+                    <a href="https://whatsapp.com/channel/0029Vb5t8pJ4inor18i4ug0c">
+                        <img src="event1.jpg" alt="Event 1">
+                        <p>Event Gaming 2025</p>
+                    </a>
+                </div>
+                <div class="event-slide">
+                    <a href="https://whatsapp.com/channel/0029Vb5t8pJ4inor18i4ug0c">
+                        <img src="event2.jpg" alt="Event 2">
+                        <p>Turnamen E-Sport</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Best Seller -->
+            <div class="best-seller">
+                <h2>Produk Best Seller</h2>
+                <div class="product-grid">
+                    <div class="product-card" onclick="showVariants('Mouse Gaming', ['Wired', 'Wireless', 'RGB'])">
+                        <img src="mouse.jpg" alt="Mouse Gaming">
+                        <h3>Mouse Gaming</h3>
+                        <div class="actions">
+                            <button onclick="addToWishlist('Mouse Gaming', event)">Wishlist</button>
+                            <button onclick="addToCart('Mouse Gaming', event)">Cart</button>
+                            <button onclick="showPreview('mouse-video.mp4', event)">Preview</button>
+                            <button onclick="showReviewModal('Mouse Gaming', event)">Review</button>
+                            <button onclick="shareProduct('Mouse Gaming', event)">Share</button>
+                        </div>
+                    </div>
+                    <div class="product-card" onclick="showVariants('Keyboard Gaming', ['Mechanical', 'Membrane'])">
+                        <img src="keyboard.jpg" alt="Keyboard Gaming">
+                        <h3>Keyboard Gaming</h3>
+                        <div class="actions">
+                            <button onclick="addToWishlist('Keyboard Gaming', event)">Wishlist</button>
+                            <button onclick="addToCart('Keyboard Gaming', event)">Cart</button>
+                            <button onclick="showPreview('keyboard-video.mp4', event)">Preview</button>
+                            <button onclick="showReviewModal('Keyboard Gaming', event)">Review</button>
+                            <button onclick="shareProduct('Keyboard Gaming', event)">Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations">
+                <h2>Rekomendasi Produk</h2>
+                <div id="recommendations" class="product-grid"></div>
+            </div>
+
+            <!-- Giveaway Ticker -->
+            <div class="giveaway-ticker">
+                <div class="ticker-content">
+                    <p>Pemenang Giveaway: User123 - Mouse Gaming RGB</p>
+                    <p>Pemenang Giveaway: GamerX - Headset Gaming</p>
+                </div>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="newsletter">
+                <h2>Berlangganan Newsletter</h2>
+                <input type="email" id="newsletterEmail" placeholder="Masukkan email Anda">
+                <button onclick="subscribe()">Berlangganan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Page -->
+    <div class="page" id="products">
+        <div class="container">
+            <h2>Pemesanan Produk</h2>
+            <div class="product-grid">
+                <div class="product-card" onclick="showVariants('Mouse Gaming', ['Wired', 'Wireless', 'RGB'])">
+                    <img src="mouse.jpg" alt="Mouse Gaming">
+                    <h3>Mouse Gaming</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('Mouse Gaming', event)">Wishlist</button>
+                        <button onclick="addToCart('Mouse Gaming', event)">Cart</button>
+                        <button onclick="showPreview('mouse-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('Mouse Gaming', event)">Review</button>
+                        <button onclick="shareProduct('Mouse Gaming', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="showVariants('Keyboard Gaming', ['Mechanical', 'Membrane', 'RGB'])">
+                    <img src="keyboard.jpg" alt="Keyboard Gaming">
+                    <h3>Keyboard Gaming</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('Keyboard Gaming', event)">Wishlist</button>
+                        <button onclick="addToCart('Keyboard Gaming', event)">Cart</button>
+                        <button onclick="showPreview('keyboard-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('Keyboard Gaming', event)">Review</button>
+                        <button onclick="shareProduct('Keyboard Gaming', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="showVariants('Headset Gaming', ['Wired', 'Wireless', '7.1 Surround'])">
+                    <img src="headset.jpg" alt="Headset Gaming">
+                    <h3>Headset Gaming</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('Headset Gaming', event)">Wishlist</button>
+                        <button onclick="addToCart('Headset Gaming', event)">Cart</button>
+                        <button onclick="showPreview('headset-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('Headset Gaming', event)">Review</button>
+                        <button onclick="shareProduct('Headset Gaming', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="showVariants('Monitor Gaming', ['24 inch', '27 inch', '32 inch'])">
+                    <img src="monitor.jpg" alt="Monitor Gaming">
+                    <h3>Monitor Gaming</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('Monitor Gaming', event)">Wishlist</button>
+                        <button onclick="addToCart('Monitor Gaming', event)">Cart</button>
+                        <button onclick="showPreview('monitor-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('Monitor Gaming', event)">Review</button>
+                        <button onclick="shareProduct('Monitor Gaming', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="showVariants('Mousepad RGB', ['Small', 'Medium', 'Large'])">
+                    <img src="mousepad.jpg" alt="Mousepad RGB">
+                    <h3>Mousepad RGB</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('Mousepad RGB', event)">Wishlist</button>
+                        <button onclick="addToCart('Mousepad RGB', event)">Cart</button>
+                        <button onclick="showPreview('mousepad-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('Mousepad RGB', event)">Review</button>
+                        <button onclick="shareProduct('Mousepad RGB', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="showVariants('Gaming Chair', ['Basic', 'Premium', 'Ergonomic'])">
+                    <img src="chair.jpg" alt="Gaming Chair">
+                    <h3>Gaming Chair</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('Gaming Chair', event)">Wishlist</button>
+                        <button onclick="addToCart('Gaming Chair', event)">Cart</button>
+                        <button onclick="showPreview('chair-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('Gaming Chair', event)">Review</button>
+                        <button onclick="shareProduct('Gaming Chair', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="showVariants('GPU Gaming', ['RTX 3060', 'RTX 3070', 'RTX 3080'])">
+                    <img src="gpu.jpg" alt="GPU Gaming">
+                    <h3>GPU Gaming</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('GPU Gaming', event)">Wishlist</button>
+                        <button onclick="addToCart('GPU Gaming', event)">Cart</button>
+                        <button onclick="showPreview('gpu-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('GPU Gaming', event)">Review</button>
+                        <button onclick="shareProduct('GPU Gaming', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="showVariants('CPU Cooler', ['Air', 'Liquid', 'RGB'])">
+                    <img src="cooler.jpg" alt="CPU Cooler">
+                    <h3>CPU Cooler</h3>
+                   <div class="actions">
+                        <button onclick="addToWishlist('CPU Cooler', event)">Wishlist</button>
+                        <button onclick="addToCart('CPU Cooler', event)">Cart</button>
+                        <button onclick="showPreview('cooler-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('CPU Cooler', event)">Review</button>
+                        <button onclick="shareProduct('CPU Cooler', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="showVariants('Gaming Desk', ['Standard', 'L-Shaped', 'RGB'])">
+                    <img src="desk.jpg" alt="Gaming Desk">
+                    <h3>Gaming Desk</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('Gaming Desk', event)">Wishlist</button>
+                        <button onclick="addToCart('Gaming Desk', event)">Cart</button>
+                        <button onclick="showPreview('desk-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('Gaming Desk', event)">Review</button>
+                        <button onclick="shareProduct('Gaming Desk', event)">Share</button>
+                    </div>
+                </div>
+                <div class="product-card" onclick="orderMC()">
+                    <img src="mc.jpg" alt="Jasa MC">
+                    <h3>Jasa MC</h3>
+                    <div class="actions">
+                        <button onclick="addToWishlist('Jasa MC', event)">Wishlist</button>
+                        <button onclick="addToCart('Jasa MC', event)">Cart</button>
+                        <button onclick="showPreview('mc-video.mp4', event)">Preview</button>
+                        <button onclick="showReviewModal('Jasa MC', event)">Review</button>
+                        <button onclick="shareProduct('Jasa MC', event)">Share</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Page -->
+    <div class="page" id="transactions">
+        <div class="container">
+            <div class="transactions">
+                <h2>Riwayat Transaksi</h2>
+                <p>Transaksi #001: Mouse Gaming RGB - 01/05/2025</p>
+                <p>Transaksi #002: Keyboard Mechanical - 02/05/2025</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Buyers Page -->
+    <div class="page" id="top-buyers">
+        <div class="container">
+            <div class="top-buyers">
+                <h2>Top Pembeli</h2>
+                <p>1. GamerX - 50 Pembelian (500 Poin)</p>
+                <p>2. ProPlayer - 45 Pembelian (450 Poin)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Page -->
+    <div class="page" id="wishlist">
+        <div class="container">
+            <div class="wishlist">
+                <h2>Wishlist</h2>
+                <div id="wishlistItems"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Page -->
+    <div class="page" id="cart">
+        <div class="container">
+            <div class="cart">
+                <h2>Cart</h2>
+                <div id="cartItems"></div>
+                <button onclick="checkoutCart()">Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tracking Page -->
+    <div class="page" id="tracking">
+        <div class="container">
+            <div class="tracking">
+                <h2>Order Tracking</h2>
+                <input type="text" id="orderId" placeholder="Enter Order ID">
+                <button onclick="trackOrder()">Track</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Buttons -->
+    <a href="https://wa.me/6285191049836?text=Ajukan%20Kendala" class="floating-btn">Ajukan Kendala</a>
+    <a href="https://wa.me/6285191049836?text=Saya%20butuh%20bantuan" class="chat-btn">Chat Support</a>
+    <div class="login-btn" onclick="showLoginModal()">Login Member</div>
+
+    <!-- Modals -->
+    <div class="login-modal" id="loginModal">
+        <div class="modal-content">
+            <h2>Login Member</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="submitLogin()">Kirim</button>
+        </div>
+    </div>
+
+    <div class="variant-modal" id="variantModal">
+        <div class="modal-content">
+            <h2 id="variantProductName"></h2>
+            <div id="variantOptions"></div>
+        </div>
+    </div>
+
+    <div class="preview-modal" id="previewModal">
+        <div class="modal-content">
+            <h2>Product Preview</h2>
+            <video id="previewVideo" controls width="100%"></video>
+        </div>
+    </div>
+
+    <div class="review-modal" id="reviewModal">
+        <div class="modal-content">
+            <h2 id="reviewProductName"></h2>
+            <input type="number" id="reviewRating" min="1" max="5" placeholder="Rating (1-5)">
+            <textarea id="reviewComment" placeholder="Your review"></textarea>
+            <button onclick="submitReview()">Submit</button>
+        </div>
+    </div>
+
+    <div class="newsletter-modal" id="newsletterModal">
+        <div class="modal-content">
+            <h2>Berlangganan Newsletter</h2>
+            <input type="email" id="newsletterModalEmail" placeholder="Masukkan email Anda">
+            <button onclick="subscribeModal()">Berlangganan</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize storage
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let userPoints = parseInt(localStorage.getItem('points')) || 0;
+
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelector('.hamburger-menu').classList.remove('active');
+            document.querySelector('.container').classList.remove('menu-active');
+            if (pageId === 'wishlist') updateWishlist();
+            if (pageId === 'cart') updateCart();
+        }
+
+        // Hamburger Menu Toggle
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            const menu = document.querySelector('.hamburger-menu');
+            menu.classList.toggle('active');
+            document.querySelector('.container').classList.toggle('menu-active', menu.classList.contains('active'));
+        });
+
+        // Search and Sort
+        document.getElementById('searchInput').addEventListener('input', filterProducts);
+        document.getElementById('sortSelect').addEventListener('change', sortProducts);
+
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                card.style.display = name.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function sortProducts() {
+            const sortBy = document.getElementById('sortSelect').value;
+            const products = Array.from(document.querySelectorAll('.product-card'));
+            products.sort((a, b) => {
+                const nameA = a.querySelector('h3').textContent.toLowerCase();
+                const nameB = b.querySelector('h3').textContent.toLowerCase();
+                if (sortBy === 'name-asc') return nameA.localeCompare(nameB);
+                if (sortBy === 'name-desc') return nameB.localeCompare(nameA);
+                if (sortBy === 'popular') return Math.random() - 0.5; // Placeholder for popularity
+            });
+            const grid = document.querySelector('.product-grid');
+            grid.innerHTML = '';
+            products.forEach(product => grid.appendChild(product));
+        }
+
+        // Login Modal
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+            addPoints('login_attempt');
+        }
+
+        function submitLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username && password) {
+                const message = `Saya ingin menjadi member\nUsername: ${username}\nPassword: ${password}`;
+                window.location.href = `https://wa.me/6285191049836?text=${encodeURIComponent(message)}`;
+                document.getElementById('loginModal').style.display = 'none';
+                addPoints('login_success');
+            } else {
+                alert('Harap isi username dan password');
+            }
+        }
+
+        // Variant Modal
+        function showVariants(productName, variants, event) {
+            if (event) event.stopPropagation();
+            document.getElementById('variantProductName').textContent = productName;
+            const variantOptions = document.getElementById('variantOptions');
+            variantOptions.innerHTML = '';
+            variants.forEach(variant => {
+                const btn = document.createElement('button');
+                btn.textContent = variant;
+                btn.onclick = () => orderProduct(productName, variant);
+                variantOptions.appendChild(btn);
+            });
+            document.getElementById('variantModal').style.display = 'flex';
+            recommendProducts(productName);
+            addPoints('view_product');
+        }
+
+        function orderProduct(productName, variant) {
+            const message = `Saya ingin membeli ${productName} - ${variant}`;
+            window.location.href = `https://wa.me/6285191049836?text=${encodeURIComponent(message)}`;
+            document.getElementById('variantModal').style.display = 'none';
+            addPoints('order');
+        }
+
+        function orderMC() {
+            window.location.href = 'https://wa.me/6285710435980?text=Saya%20ingin%20menggunakan%20jasa%20MC';
+            addPoints('order');
+        }
+
+        // Wishlist
+        function addToWishlist(product, event) {
+            if (event) event.stopPropagation();
+            if (!wishlist.includes(product)) {
+                wishlist.push(product);
+                localStorage.setItem('wishlist', JSON.stringify(wishlist));
+                updateWishlist();
+                addPoints('wishlist');
+                alert(`${product} ditambahkan ke wishlist!`);
+            }
+        }
+
+        function updateWishlist() {
+            const wishlistItems = document.getElementById('wishlistItems');
+            wishlistItems.innerHTML = wishlist.length ? wishlist.map(item => `<p>${item} <button onclick="removeFromWishlist('${item}')">Hapus</button></p>`).join('') : '<p>Wishlist kosong</p>';
+        }
+
+        function removeFromWishlist(product) {
+            wishlist = wishlist.filter(item => item !== product);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            updateWishlist();
+        }
+
+        // Cart
+        function addToCart(product, event) {
+            if (event) event.stopPropagation();
+            cart.push(product);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+            addPoints('cart');
+            alert(`${product} ditambahkan ke cart!`);
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = cart.length ? cart.map(item => `<p>${item} <button onclick="removeFromCart('${item}')">Hapus</button></p>`).join('') : '<p>Cart kosong</p>';
+        }
+
+        function removeFromCart(product) {
+            cart = cart.filter(item => item !== product);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function checkoutCart() {
+            if (cart.length) {
+                const message = `Saya ingin checkout:\n${cart.join('\n')}`;
+                window.location.href = `https://wa.me/6285191049836?text=${encodeURIComponent(message)}`;
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCart();
+                addPoints('checkout');
+            } else {
+                alert('Cart kosong!');
+            }
+        }
+
+        // Product Preview
+        function showPreview(videoSrc, event) {
+            if (event) event.stopPropagation();
+            document.getElementById('previewVideo').src = videoSrc;
+            document.getElementById('previewModal').style.display = 'flex';
+            addPoints('preview');
+        }
+
+        // Reviews
+        function showReviewModal(product, event) {
+            if (event) event.stopPropagation();
+            document.getElementById('reviewProductName').textContent = product;
+            document.getElementById('reviewModal').style.display = 'flex';
+            addPoints('review_attempt');
+        }
+
+        function submitReview() {
+            const product = document.getElementById('reviewProductName').textContent;
+            const rating = document.getElementById('reviewRating').value;
+            const comment = document.getElementById('reviewComment').value;
+            if (rating && comment) {
+                const message = `Review untuk ${product}\nRating: ${rating}/5\nKomentar: ${comment}`;
+                window.location.href = `https://wa.me/6285191049836?text=${encodeURIComponent(message)}`;
+                document.getElementById('reviewModal').style.display = 'none';
+                addPoints('review_submit');
+            } else {
+                alert('Harap isi rating dan komentar');
+            }
+        }
+
+        // Social Sharing
+        function shareProduct(product, event) {
+            if (event) event.stopPropagation();
+            if (navigator.share) {
+                navigator.share({
+                    title: product,
+                    text: `Check out this ${product} on QRIS Only!`,
+                    url: window.location.href
+                });
+            } else {
+                alert(`Share ${product} via social media!`);
+            }
+            addPoints('share');
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+            addPoints('theme_toggle');
+        }
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
+        // Order Tracking
+        function trackOrder() {
+            const orderId = document.getElementById('orderId').value;
+            if (orderId) {
+                window.location.href = `https://wa.me/6285191049836?text=Track%20Order%20ID:${orderId}`;
+                addPoints('track');
+            } else {
+                alert('Harap masukkan Order ID');
+            }
+        }
+
+        // Newsletter
+        function subscribe() {
+            const email = document.getElementById('newsletterEmail').value;
+            if (email) {
+                const message = `Saya ingin berlangganan newsletter\nEmail: ${email}`;
+                window.location.href = `https://wa.me/6285191049836?text=${encodeURIComponent(message)}`;
+                addPoints('newsletter');
+            } else {
+                alert('Harap masukkan email');
+            }
+        }
+
+        function subscribeModal() {
+            const email = document.getElementById('newsletterModalEmail').value;
+            if (email) {
+                const message = `Saya ingin berlangganan newsletter\nEmail: ${email}`;
+                window.location.href = `https://wa.me/6285191049836?text=${encodeURIComponent(message)}`;
+                document.getElementById('newsletterModal').style.display = 'none';
+                addPoints('newsletter');
+            } else {
+                alert('Harap masukkan email');
+            }
+        }
+
+        // Gamification
+        function addPoints(action) {
+            const pointsMap = {
+                'login_attempt': 5,
+                'login_success': 10,
+                'view_product': 2,
+                'wishlist': 5,
+                'cart': 10,
+                'order': 20,
+                'checkout': 50,
+                'preview': 3,
+                'review_attempt': 5,
+                'review_submit': 15,
+                'share': 10,
+                'theme_toggle': 2,
+                'track': 5,
+                'newsletter': 10
+            };
+            userPoints += pointsMap[action] || 1;
+            localStorage.setItem('points', userPoints);
+            document.getElementById('userPoints').textContent = `Poin: ${userPoints}`;
+        }
+
+        // Product Recommendations
+        function recommendProducts(product) {
+            const related = {
+                'Mouse Gaming': ['Mousepad RGB', 'Keyboard Gaming'],
+                'Keyboard Gaming': ['Mouse Gaming', 'Headset Gaming'],
+                'Headset Gaming': ['Mouse Gaming', 'Monitor Gaming'],
+                'Monitor Gaming': ['Headset Gaming', 'Gaming Desk'],
+                'Mousepad RGB': ['Mouse Gaming', 'Keyboard Gaming'],
+                'Gaming Chair': ['Gaming Desk', 'Monitor Gaming'],
+                'GPU Gaming': ['CPU Cooler', 'Monitor Gaming'],
+                'CPU Cooler': ['GPU Gaming', 'Gaming Desk'],
+                'Gaming Desk': ['Gaming Chair', 'Monitor Gaming'],
+                'Jasa MC': ['Headset Gaming', 'Mouse Gaming']
+            };
+            const recommendations = related[product] || [];
+            const recDiv = document.getElementById('recommendations');
+            recDiv.innerHTML = recommendations.length ? recommendations.map(item => `
+                <div class="product-card" onclick="showVariants('${item}', ['Varian 1', 'Varian 2'])">
+                    <img src="${item.toLowerCase().replace(' ', '')}.jpg" alt="${item}">
+                    <h3>${item}</h3>
+                </div>
+            `).join('') : '<p>Tidak ada rekomendasi</p>';
+        }
+
+        // Event Countdown
+        function countdown() {
+            const eventDate = new Date('2025-06-01T00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('countdown').textContent = `Event Berikutnya: ${days}d ${hours}h ${minutes}m`;
+        }
+        setInterval(countdown, 1000);
+
+        // Auto-scroll Event Board
+        const eventBoard = document.querySelector('.event-board');
+        let scrollAmount = 0;
+        setInterval(() => {
+            scrollAmount += 1;
+            eventBoard.scrollLeft = scrollAmount;
+            if (scrollAmount >= eventBoard.scrollWidth - eventBoard.clientWidth) {
+                scrollAmount = 0;
+            }
+        }, 30);
+
+        // Modal Close on Click Outside
+        document.querySelectorAll('.login-modal, .variant-modal, .preview-modal, .review-modal, .newsletter-modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+        });
+
+        // Initialize
+        updateWishlist();
+        updateCart();
+        recommendProducts('Mouse Gaming');
+    </script>
+</body>
+</html>
